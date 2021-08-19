@@ -1,0 +1,97 @@
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-app.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase     products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-analytics.js"></script>
+
+   
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.7.0/firebase-firestore.js"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <table>
+            <tr><td style="width: 525px;" class="intropara">UserName</td>
+                <td style="width: 525px;" class="intropara">Email</td>
+                <!-- <td style="width: 50px;"></td> -->
+                <td style="width: 525px;" class="intropara">Password</td>
+            </tr>
+            <tr>
+                <td>
+                    <div class="input-group mb-3">
+
+                        <input id="usrel" placeholder="Type UserName" type="text" class="form-control bg-light"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </td>
+                <td>
+                    <div class="input-group mb-3">
+
+                        <input id="emailel" placeholder="Type Email" type="email" class="form-control bg-light"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </td>
+                <!-- <td style="width: 50px;"></td> -->
+
+                <td>
+                    <div class="input-group mb-3">
+
+                        <input id="passel" placeholder="Type Password" type="password" class="form-control bg-light"
+                            aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">
+                    </div>
+                </td>
+            </tr>
+
+            <tr>
+                <td style="width: 50px;"></td>
+                <td>
+                    <div class="input-group mb-3">
+                        <button onclick="regEmail()" class="form-control bg-info text-white"
+                        aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">Register</button>
+                        
+                    </div>
+                </td>
+                <td style="width: 50px;"></td>
+                
+
+                
+            </tr>
+            <tr>
+                <td style="width: 50px;"></td>
+                <td>
+                    <div class="input-group mb-3">
+                        <button onclick="window.location.href='./loginpage.html'" class="form-control bg-info text-white"
+                        aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">Login</button>
+                        
+                    </div>
+                </td>
+                <td style="width: 50px;"></td>
+                <!-- onclick="resetmyPass()" -->
+            </tr>
+            <tr>
+                <td style="width: 50px;"></td>
+                <td>
+                    <div class="input-group mb-3">
+                        <button onclick="resetmyPass()" class="form-control bg-info text-white"
+                        aria-label="Sizing example input" aria-describedby="inputGroup-sizing-default">Reset Password</button>
+                        
+                    </div>
+                </td>
+                <td style="width: 50px;"></td>
+                
+            </tr>
+
+        </table>
+        <h1></h1>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
+</body>
+</html>
