@@ -14,31 +14,62 @@ firebase.analytics();
 
 
 var db = firebase.firestore();
+var storage = firebase.storage();
 let chatWin = document.getElementById('chatWin');
 let msgUl = document.getElementById('msgUl');
+let profPic=document.getElementById('upload-image');
 
 //////////////////////////////////////Registration Page
 var emailel = document.getElementById("emailel");
 var passel = document.getElementById("passel");
 var usrel = document.getElementById("usrel");
-let msgData = []
+let profimgEle=document.getElementById('avatar-custom');
+
+function uploadImageToStorage(UID) {
+  return new Promise(async (resolve, reject) => {
+      let image = profPic.files[0];
+      let storageRef = storage.ref();
+      let imageRef = storageRef.child(`avatar/${UID}/${image.name}`);
+      await imageRef.put(image);
+      let url = await imageRef.getDownloadURL();
+      resolve(url);
+  })
+}
+let getimgBool=true;
+
+function getimg(){
+  
+  if(getimgBool){
+  let image=profPic.files[0];
+  console.log(image)
+  profimgEle.src=`./images/${image.name}`;
+
+  console.log(image)
+  
+}else{getimgBool=false}
+}
 
 function regEmail() {
+  if(usrel.value!=''&&passel.value!=''&&getimgBool){
   firebase.auth().createUserWithEmailAndPassword(emailel.value, passel.value)
-    .then((userCredential) => {
+  .then(async(userCredential) => {
       // firebase.auth().signOut()    
       // logmsg.innerHTML="Signed in suceessfully"
       var user = userCredential.user;
+      let getimgUrl=await uploadImageToStorage(user.uid)
       console.log(user)
       let usrInfo = {
         username: usrel.value,
         email: emailel.value,
         UID: user.uid,
-        msgcountVal: 0
+        profURL:getimgUrl
+        
       }
+
       saveDatainDB(usrInfo);
     }
     )
+  }
 }
 
 function saveDatainDB(usrObj) {
@@ -115,34 +146,35 @@ let curruserID = "", OtherUser, msgFullId = "";
 let sendbtn = document.getElementById('sendbtn');
 let boolvar1 = true, count = 0;
 let btnEle = "";
-let msgCount = 0
 
 
 
 let winheight = window.outerHeight;
+
 chatWin.style.height = (winheight - 200) + 'px'
 
-
+let boolvarforsnap=false;
 function gettingMsg(btnUsrEle) {
+  
   if (boolvar1 && btnUsrEle != btnEle) {
-
+    
     btnEle = document.getElementById(btnUsrEle.id);
     console.log("Check***************")
+    msgUl.querySelectorAll('*').forEach(n => n.remove());
 
-     msgUl.querySelectorAll('*').forEach(n => n.remove());
-     
-     var Cur_uid = firebase.auth().currentUser.uid;
-     
-     curruserID = Cur_uid
-     OtherUser = btnUsrEle.id
-     // console.log(user,uid)
-     let msgId = String(Cur_uid + btnUsrEle.id)
-     msgFullId = msgId;
-     console.log(Cur_uid,msgId)
-     snapReal(Cur_uid,msgId)
-     
-     
-    }
+    var Cur_uid = firebase.auth().currentUser.uid;
+
+    curruserID = Cur_uid
+    OtherUser = btnUsrEle.id
+    // console.log(user,uid)
+    let msgId = String(Cur_uid + btnUsrEle.id)
+    msgFullId = msgId;
+    snapReal(Cur_uid, msgId)
+    
+    boolvarforsnap=true
+
+
+  }
   else {
     btnEle.disabled = false;
 
@@ -153,60 +185,45 @@ function gettingMsg(btnUsrEle) {
   }
 }
 
-function snapReal(curr,msgid) {
+var unsubscribe;
+function snapReal(currId, msgid) {
   
+  
+  if(boolvarforsnap){unsubscribe()}
+  
+  // boolvarforsnap=true
+  unsubscribe = db.collection("Myusers").doc(currId).collection(msgid)
+    .orderBy("timeStamp", "asc")
+    .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
 
-    
-    db.collection("Myusers").doc(curr).collection(msgid)
-      .orderBy("timeStamp", "asc")
-      .onSnapshot((snapshot) => {
-        console.log("msg count from snapshot ", snapshot.docChanges())
-        console.log("msg data check", snapshot.docChanges())
-        console.log("msgid",msgid)
-        msgData=[];
-        // msgData = snapshot.docChanges()
-        snapshot.docChanges().forEach((change) => {
 
-console.log("change in snaoshot",change)
+        let usrName;
+        if (change.type === "added") {
+
+          // console.log(change.doc.ref.parent.parent.id)
+
+          usrName = document.createElement('LI');
+          usrName.style.listStyleType = "none"
+
+          let usrNameTextNode = document.createTextNode(change.doc.data().messgeFrom + ": " + change.doc.data().message)
+
+          usrName.appendChild(usrNameTextNode)
+          msgUl.appendChild(usrName)
+          // console.log(usrNameTextNode)
+
+
+          // console.log(change.doc.data())
           
-console.log("msg CONDITON",(change.type === "added" && snapshot.docChanges().length !== msgCount.length ))
-          // if (change.type === "added" && snapshot.docChanges().length !== msgCount.length ) {
 
-let msgObj={messageFrom:change.doc.data().messgeFrom , messageText : change.doc.data().message }
-            msgData.push(msgObj)
-
-            // let usrName;
-            // // console.log(change.doc.ref.parent.parent.id)
-
-            // usrName = document.createElement('LI');
-            // usrName.style.listStyleType = "none"
-
-            // let usrNameTextNode = document.createTextNode(change.doc.data().messgeFrom + ": " + change.doc.data().message)
-
-            // usrName.appendChild(usrNameTextNode)
-            // msgUl.appendChild(usrName)
-            // console.log(usrNameTextNode)
-
-
-            // console.log(change.doc.data(),"**************")
-            // chatWin.append(usrName)
-            // node.querySelectorAll('*').forEach(n => n.remove());
-
-          // }
-
-        });
-
-        console.log("msg from MSGUL",msgUl.childElementCount)
-        msgCount = msgUl.childElementCount
-        console.log("msg from msgCount",msgCount)
-        console.log("msg data +",msgData)
-        
+        }
 
       });
 
-
+    });
 
 }
+
 
 
 
