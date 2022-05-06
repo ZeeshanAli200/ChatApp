@@ -16,7 +16,6 @@ firebase.analytics();
 var db = firebase.firestore();
 var storage = firebase.storage();
 let chatWin = document.getElementById('chatWin');
-let msgUl = document.getElementById('msgUl');
 let profPic=document.getElementById('upload-image');
 
 //////////////////////////////////////Registration Page
@@ -50,6 +49,7 @@ function getimg(){
 }
 
 function regEmail() {
+  
   if(usrel.value!=''&&passel.value!=''&&getimgBool){
   firebase.auth().createUserWithEmailAndPassword(emailel.value, passel.value)
   .then(async(userCredential) => {
@@ -83,6 +83,11 @@ function saveDatainDB(usrObj) {
 
 
 function signInEmail() {
+  // console.log("emailel",emailel);
+  let emailel = document.getElementById("emailel");
+  let passel = document.getElementById("passel");
+
+  console.log("emailel",emailel.value);
   firebase
     .auth()
     .signInWithEmailAndPassword(emailel.value, passel.value)
@@ -104,11 +109,13 @@ function signInEmail() {
 }
 //////////////////////////////////////Registration Page
 
-let chatBox = document.getElementById('chatBox');
-let msgInp = document.getElementById('msgInp');
 
-let anotheruser = "";
+
+
+
 function getUsersList(ele) {
+  let anotheruser = "";
+  let chatBox = document.getElementById('chatBox');
   let timelap = setTimeout(() => {
     db.collection("Myusers").get()
       .then((userDoc) => {
@@ -142,10 +149,10 @@ function getUsersList(ele) {
 }
 
 
-let curruserID = "", OtherUser, msgFullId = "";
+var OtherUser, msgFullId = "";
 let sendbtn = document.getElementById('sendbtn');
-let boolvar1 = true, count = 0;
-let btnEle = "";
+let count = 0;
+
 
 
 
@@ -153,11 +160,16 @@ let winheight = window.outerHeight;
 
 chatWin.style.height = (winheight - 200) + 'px'
 
-let boolvarforsnap=false;
+var boolvarforsnap=false;
 function gettingMsg(btnUsrEle) {
   
+  let msgUl = document.getElementById('msgUl');
+
+  let btnEle = "";  
+  let boolvar1 = true
+  
   if (boolvar1 && btnUsrEle != btnEle) {
-    
+    let curruserID = ""
     btnEle = document.getElementById(btnUsrEle.id);
     console.log("Check***************")
     msgUl.querySelectorAll('*').forEach(n => n.remove());
@@ -269,15 +281,18 @@ function snapReal(currId, msgid) {
 
 
 
-function sendFunc() {
+async function sendFunc() {
+  let msgInp = document.getElementById('msgInp');
+  let curruserID = ""
+  var Cur_uid = await firebase.auth().currentUser.uid;
 
-
+    curruserID = Cur_uid
 
   db.collection("Myusers").get()
     .then((userDoc) => {
       console.log("send get*********")
       userDoc.forEach((userData) => {
-        // console.log(userData.id,curruserID)
+        console.log(userData.id,curruserID)
         let msgObj = { messgeFrom: userData.data().username, message: msgInp.value, timeStamp: new Date() }
         if (userData.id == curruserID && OtherUser != curruserID) {
 
